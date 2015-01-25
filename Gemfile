@@ -4,6 +4,7 @@ gem "bundler"
 gem "berkshelf",  "~> 2.0"
 gem "chef",       "~> 11.0"
 gem "chefspec",   "~> 3.0"
+gem "serverspec"
 gem "foodcritic", "~> 3.0"
 gem "rake"
 
