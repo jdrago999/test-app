@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+files:
+  - source: chef/
+    destination: /etc/chef/codedeploy
+  - source: ./
+    destination: /var/www/simple
+hooks:
+  BeforeInstall:
+    - location: deploy_hooks/install-chef.sh
+      timeout: 1800
+      runas: root
+  ApplicationStart:
+    - location: deploy_hooks/chef-solo.sh
+      runas: root
+  # ValidateService:
+  #   - location: deploy_hooks/verify_service.sh
+  #     runas: root
+
+
