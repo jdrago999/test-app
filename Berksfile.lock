@@ -1,0 +1,20 @@
+DEPENDENCIES
+  codedeploy-agent
+    git: https://github.com/jdrago999/chef-codedeploy-agent.git
+    revision: a8ded58053cddb7f6c6f70c618fbd9d2f11a5860
+  test-app
+    path: .
+    metadata: true
+  test-cookbook
+    git: https://github.com/jdrago999/test-cookbook
+    revision: a2bdb96dac0c2fed057b936ca5294a63a3b5af9b
+
+GRAPH
+  apt (2.6.1)
+  codedeploy-agent (0.1.0)
+    apt (>= 0.0.0)
+  test-app (0.1.0)
+    codedeploy-agent (>= 0.0.0)
+    test-cookbook (>= 0.0.0)
+  test-cookbook (0.1.0)
+    apt (>= 0.0.0)
