@@ -6,6 +6,5 @@ description      'Installs/Configures test-app'
 long_description 'Installs/Configures test-app'
 version          '0.1.0'
 
-depends 'codedeploy-agent'
 depends 'test-cookbook'
 

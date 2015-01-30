@@ -6,7 +6,11 @@ gem "chefspec"
 gem "foodcritic", "~> 3.0"
 gem "serverspec"
 gem "rake"
-#gem "yarjuf"
+
+
+gem 'sinatra'
+gem 'activesupport', require: 'active_support'
+gem 'puma'
 
 group :integration do
   gem "test-kitchen", "~> 1.0"
