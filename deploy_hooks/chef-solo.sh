@@ -1,7 +1,11 @@
 #!/bin/bash
 
-# First, make sure the tomcat cookbook is installed
-cd /etc/chef/codedeploy/
-/usr/bin/env librarian-chef install
+cd /var/www/test-app
+if [ -f metadata.rb ]; then
+  mkdir -p site-cookbooks/test-app
+  mv recipes site-cookbooks/test-app/
+  mv metadata.rb site-cookbooks/test-app/
+fi
+berks vendor site-cookbooks
 
-/usr/bin/env chef-solo -c /etc/chef/codedeploy/solo.rb
+/usr/bin/env chef-solo -c chef/solo.rb -j chef/node.json

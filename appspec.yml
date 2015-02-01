@@ -1,10 +1,8 @@
 version: 0.0
 os: linux
 files:
-  - source: chef/
-    destination: /etc/chef/codedeploy
   - source: ./
-    destination: /var/www/simple
+    destination: /var/www/test-app
 hooks:
   BeforeInstall:
     - location: deploy_hooks/install-chef.sh
