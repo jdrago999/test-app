@@ -206,7 +206,9 @@ apt-get update
 apt-get install -y ruby2.0 awscli curl
 ruby --version
 cd /home/ubuntu
-curl 'https://gist.github.com/jdrago999/6f93c3b95423fa9bf8c7/raw/aa2a23e106b5658250c025c9b90c720c34210762/codedeploy-latest.rb' | bash -s -- auto
+wget -O install 'https://gist.github.com/jdrago999/6f93c3b95423fa9bf8c7/raw/aa2a23e106b5658250c025c9b90c720c34210762/codedeploy-latest.rb'
+chmod +x ./install
+./install auto
 sudo service codedeploy-agent start
 touch /tmp/codedeploy-agent-installed-ok
 
@@ -215,7 +217,6 @@ mkdir /home/ubuntu/.aws
 echo '[default]
 region = {{ref('AWS::Region')}}
 ' > /home/ubuntu/.aws/config
-
 echo '[default]
 aws_access_key_id = {{ref('ServerKey')}}
 aws_secret_access_key = {{get_att('ServerKey', 'SecretAccessKey')}}
@@ -225,7 +226,12 @@ aws_secret_access_key = {{get_att('ServerKey', 'SecretAccessKey')}}
 mkdir /home/ubuntu/.ssh
 aws s3 cp s3://keys-staging/development.pem /home/ubuntu/.ssh/id_rsa --region {{ref('AWS::Region')}}
 chmod 0400 /home/ubuntu/.ssh/id_rsa
+# Extract the public key from the private key:
 ssh-keygen -y -f /home/ubuntu/.ssh/id_rsa > /home/ubuntu/.ssh/id_rsa.pub
+# We want to clone private repos, so add github's ssh key to our known.hosts
+# thereby avoiding the interactive prompt to add the key to known_hosts later.
+# We this this for github in this way instead of overriding the parameter in .ssh/config
+# because we only want to allow this one key -- not just any old key.
 ssh-keyscan github.com >> /home/ubuntu/.ssh/known_hosts
 chown ubuntu:ubuntu -R /home/ubuntu/.ssh
 "))

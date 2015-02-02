@@ -7,4 +7,4 @@ long_description 'Installs/Configures test-app'
 version          '0.1.0'
 
 depends 'test-cookbook'
-
+depends 'apt'
