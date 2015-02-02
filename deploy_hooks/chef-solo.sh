@@ -1,5 +1,7 @@
 #!/bin/bash
 
+exit
+
 cd /var/www/test-app
 rm -rf site-cookbooks/test-app
 mkdir -p site-cookbooks/test-app
