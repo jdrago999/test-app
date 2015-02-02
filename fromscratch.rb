@@ -97,7 +97,8 @@ template do
               ],
               :Resource => [
                 "arn:aws:s3:::aws-codedeploy-us-west-2/*",
-                "arn:aws:s3:::aws-codedeploy-us-east-1/*"
+                "arn:aws:s3:::aws-codedeploy-us-east-1/*",
+                "arn:aws:s3:::keys-staging/*"
               ]
             }
           ],
@@ -188,6 +189,9 @@ template do
     UserName: ref('ServerUser')
   }
 
+
+
+
   resource 'LaunchConfig', :Type => 'AWS::AutoScaling::LaunchConfiguration', :Properties => {
     InstanceType: 't2.medium',
     ImageId: find_in_map('AWSRegion2AMI', ref('AWS::Region'), 'id'),
@@ -195,19 +199,36 @@ template do
     IamInstanceProfile: ref('RootInstanceProfile'),
     KeyName: ref('KeyPairName'),
     AssociatePublicIpAddress: true,
-    UserData: base64('#!/bin/bash
+    UserData: base64(interpolate("#!/bin/bash
 
 touch /tmp/user-data-was-here
 apt-get update
-apt-get install -y ruby2.0
+apt-get install -y ruby2.0 awscli curl
 ruby --version
 cd /home/ubuntu
-wget -O install "https://gist.github.com/jdrago999/6f93c3b95423fa9bf8c7/raw/aa2a23e106b5658250c025c9b90c720c34210762/codedeploy-latest.rb"
-chmod +x ./install
-./install auto
+curl 'https://gist.github.com/jdrago999/6f93c3b95423fa9bf8c7/raw/aa2a23e106b5658250c025c9b90c720c34210762/codedeploy-latest.rb' | bash -s -- auto
 sudo service codedeploy-agent start
 touch /tmp/codedeploy-agent-installed-ok
-')
+
+# Also install the aws credentials:
+mkdir /home/ubuntu/.aws
+echo '[default]
+region = {{ref('AWS::Region')}}
+' > /home/ubuntu/.aws/config
+
+echo '[default]
+aws_access_key_id = {{ref('ServerKey')}}
+aws_secret_access_key = {{get_att('ServerKey', 'SecretAccessKey')}}
+' > /home/ubuntu/.aws/credentials
+
+# Now install the ssh key so we can interact with github:
+mkdir /home/ubuntu/.ssh
+aws s3 cp s3://keys-staging/development.pem /home/ubuntu/.ssh/id_rsa --region {{ref('AWS::Region')}}
+chmod 0400 /home/ubuntu/.ssh/id_rsa
+ssh-keygen -y -f /home/ubuntu/.ssh/id_rsa > /home/ubuntu/.ssh/id_rsa.pub
+ssh-keyscan github.com >> /home/ubuntu/.ssh/known_hosts
+chown ubuntu:ubuntu -R /home/ubuntu/.ssh
+"))
   }
   resource 'ASG', :Type => 'AWS::AutoScaling::AutoScalingGroup', :Properties => {
     Tags: [{Key: 'Name', Value: ref('LaunchConfig'), PropagateAtLaunch: true}],

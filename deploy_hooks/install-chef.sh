@@ -24,7 +24,7 @@ elif [ ! -z "`which apt-get`" ]; then
 fi
 
 # Now, we can install the required gems
-for gem in chef ohai librarian-chef io-console; do
+for gem in chef ohai librarian-chef io-console berkshelf; do
     gem2.0 list | grep -q $gem
     if [ $? != 0 ]; then
         gem2.0 install $gem
