@@ -1,11 +1,10 @@
 #!/bin/bash
 
 cd /var/www/test-app
-if [ -e metadata.rb ]; then
-  mkdir -p site-cookbooks/test-app
-  mv recipes site-cookbooks/test-app/
-  mv metadata.rb site-cookbooks/test-app/
-fi
+rm -rf site-cookbooks/test-app
+mkdir -p site-cookbooks/test-app
+cp -rf recipes site-cookbooks/test-app/
+cp metadata.rb site-cookbooks/test-app/
 berks vendor site-cookbooks
 
 /usr/bin/env chef-solo -c chef/solo.rb -j chef/node.json
