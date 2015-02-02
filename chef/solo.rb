@@ -1,5 +1,5 @@
 cookbook_path [
-  './site-cookbooks',
+  '/var/www/test-app/site-cookbooks',
   "#{ENV['HOME']}/.berkshelf/cookbooks"
 ]
 
