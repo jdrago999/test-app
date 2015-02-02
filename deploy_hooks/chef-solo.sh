@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd /var/www/test-app
-if [ -f metadata.rb ]; then
+if [ -e metadata.rb ]; then
   mkdir -p site-cookbooks/test-app
   mv recipes site-cookbooks/test-app/
   mv metadata.rb site-cookbooks/test-app/
