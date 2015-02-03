@@ -26,7 +26,7 @@ template do
     :Default => 'us-east-1'
 
   mapping 'AWSRegion2AMI',
-    :'us-east-1' => { :id => 'ami-86562dee' },
+    :'us-east-1' => { :id => 'ami-1e084b76' },
     :'us-west-2' => { :id => 'ami-xxxxxxxx' }
 
   resource 'LogBucket', :Type => 'AWS::S3::Bucket', :DeletionPolicy => 'Delete', :Properties => { :AccessControl => 'Private' }
@@ -202,15 +202,6 @@ template do
     UserData: base64(interpolate("#!/bin/bash
 
 touch /tmp/user-data-was-here
-apt-get update
-apt-get install -y ruby2.0 awscli curl
-ruby --version
-cd /home/ubuntu
-wget -O install 'https://gist.github.com/jdrago999/6f93c3b95423fa9bf8c7/raw/aa2a23e106b5658250c025c9b90c720c34210762/codedeploy-latest.rb'
-chmod +x ./install
-./install auto
-sudo service codedeploy-agent start
-touch /tmp/codedeploy-agent-installed-ok
 
 # Also install the aws credentials:
 mkdir /home/ubuntu/.aws
@@ -234,6 +225,14 @@ ssh-keygen -y -f /home/ubuntu/.ssh/id_rsa > /home/ubuntu/.ssh/id_rsa.pub
 # because we only want to allow this one key -- not just any old key.
 ssh-keyscan github.com >> /home/ubuntu/.ssh/known_hosts
 chown ubuntu:ubuntu -R /home/ubuntu/.ssh
+
+# Setup ssh keys for root user (since that user does all the work):
+mkdir /root/.ssh
+cp /home/ubuntu/.ssh/id_rsa /root/.ssh
+cp /home/ubuntu/.ssh/id_rsa.pub /root/.ssh
+cp /home/ubuntu/.ssh/known_hosts /root/.ssh
+chown root:root /root/.ssh/id_rsa* /root/.ssh/known_hosts
+
 "))
   }
   resource 'ASG', :Type => 'AWS::AutoScaling::AutoScalingGroup', :Properties => {
